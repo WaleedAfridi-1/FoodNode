@@ -12,15 +12,26 @@ const otpRouter = require("./routes/otp.route");
 const app = express();
 
 
+// app.use(cors({
+//     origin: [
+//         "https://food-node.vercel.app", 
+//         "http://localhost:3000"
+//     ],
+//     credentials: true,
+//     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+//     allowedHeaders: ["Content-Type", "Authorization"]
+// }))
+
 app.use(cors({
-    origin: [
-        "https://food-node.vercel.app", 
-        "http://localhost:3000"
-    ],
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}))
+  origin: "https://food-node.vercel.app",
+  credentials: true,
+}));
+
+app.options("*", cors({
+  origin: "https://food-node.vercel.app",
+  credentials: true,
+}));
+
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
