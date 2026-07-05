@@ -17,7 +17,7 @@ const UserLoginPageComponent = () => {
         `${NEXT_PUBLIC_API_URL}/api/auth/user/login`,
         {
           method: "POST",
-          credentials: "omit",
+          credentials: "include",
           headers: {
             "Content-Type": "application/json",
           },
