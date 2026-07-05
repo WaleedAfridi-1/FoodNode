@@ -14,7 +14,7 @@ const UserLoginPageComponent = () => {
     try {
       setIsLoading(true);
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/auth/user/login`,
+        `https://foodnode-production.up.railway.app/api/auth/user/login`,
         {
           method: "POST",
           credentials: "include",
