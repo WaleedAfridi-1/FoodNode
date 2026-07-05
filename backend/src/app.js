@@ -12,6 +12,13 @@ const otpRouter = require("./routes/otp.route");
 const app = express();
 
 
+app.use((req, res, next) => {
+  console.log("METHOD:", req.method);
+  console.log("URL:", req.originalUrl);
+  console.log("ORIGIN:", req.headers.origin);
+  next();
+});
+
 // app.use(cors({
 //     origin: [
 //         "https://food-node.vercel.app", 
