@@ -29,15 +29,27 @@ app.use((req, res, next) => {
 //     allowedHeaders: ["Content-Type", "Authorization"]
 // }))
 
-app.use(cors({
-  origin: "https://food-node.vercel.app",
-  credentials: true,
-}));
+const corsOptions = {
+  origin: function (origin, callback) {
+    const allowedOrigins = [
+      "https://food-node.vercel.app",
+      "http://localhost:3000"
+    ];
 
-app.options("*", cors({
-  origin: "https://food-node.vercel.app",
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
   credentials: true,
-}));
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+};
+
+app.use(cors(corsOptions));
+app.options("*", cors(corsOptions));
+
 
 app.use(cookieParser());
 app.use(express.json());
