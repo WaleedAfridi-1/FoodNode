@@ -9,7 +9,7 @@ const UserLoginPageComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-
+  console.log("Backend URL being called:", process.env.NEXT_PUBLIC_API_URL);
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
