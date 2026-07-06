@@ -36,6 +36,7 @@ const UserLoginPageComponent = () => {
       }
     } catch (error) {
       toast.error(error.message)
+      console.log(error)
     } finally {
       setIsLoading(false);
     }
