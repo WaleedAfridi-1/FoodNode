@@ -23,8 +23,8 @@ app.use(cors({
     origin: [
         "https://food-node.vercel.app",
         "https://food-node-git-main-waleedafridi-1s-projects.vercel.app",
-        "https://food-node-1pek8xusw-waleedafridi-1s-projects.vercel.app"
-        "http://localhost:3000"
+        "https://food-node-1pek8xusw-waleedafridi-1s-projects.vercel.app",
+        "http://localhost:3000",
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
