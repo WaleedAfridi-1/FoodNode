@@ -138,52 +138,6 @@ const userLogout = async (req, res) => {
 
 
 
-
-// FoodPartner Auth 
-// const registerFoodPartner = async (req, res) => {
-//     try {
-//         const { fName, email, password, phone, address, businessName } = req.body;
-//         const foodPartner = await foodPartnerModel.findOne({ email });
-
-//         if (foodPartner) {
-//             return res.status(400).json({ message: "User Already Exist, Please Login" })
-//         }
-//         const hashPassword = await bcrypt.hash(password, 10);
-//         const createdFoodPartner = await foodPartnerModel.create({
-//             fName,
-//             email,
-//             phone,
-//             address,
-//             businessName,
-//             password: hashPassword,
-//         });
-//         const token = jwt.sign({ id: createdFoodPartner._id }, process.env.JWT_SECRET_KEY)
-//         res.cookie("token", token, {
-//             httpOnly: true,
-//             secure: false,
-//             sameSite: "lax"
-//         })
-
-//         res.cookie("userId", createdFoodPartner._id.toString(), { httpOnly: false, path: "/" });
-//         res.cookie("userRole", "food-partner", { httpOnly: false, path: "/" });
-
-//         res.status(201).json({
-//             message: "Account Created Successfully.",
-//             foodPartner: {
-//                 _id: createdFoodPartner._id.toString(),
-//                 fName: createdFoodPartner.fName,
-//                 businessName: createdFoodPartner.businessName,
-//                 email: createdFoodPartner.email,
-//                 phone: createdFoodPartner.phone,
-//                 address: createdFoodPartner.address
-
-//             }
-//         })
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
-
 // auth.controller.js
 const registerFoodPartner = async (req, res) => {
     try {
