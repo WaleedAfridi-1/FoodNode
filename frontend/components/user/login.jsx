@@ -17,6 +17,7 @@ const UserLoginPageComponent = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/api/auth/user/login`,
         {
           method: "POST",
+          mode: 'cors',
           credentials: "include",
           headers: {
             "Content-Type": "application/json",
