@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -9,6 +9,10 @@ const UserLoginPageComponent = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+
+  useEffect(() => {
+  console.log("API URL:", process.env.NEXT_PUBLIC_API_URL);
+}, []);
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
