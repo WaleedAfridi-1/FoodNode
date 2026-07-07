@@ -36,7 +36,7 @@ const userRegister = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: true,
             secure: true,
-            sameSite: "none",
+            sameSite: "None",
             path: "/"
         });
         res.cookie("userId", StringUserId,
@@ -84,7 +84,7 @@ const userLogin = async (req, res) => {
             res.cookie("token", token, {
                 httpOnly: true,
                 secure: true,
-                sameSite: "none",
+                sameSite: "None",
                 path: "/"
             })
             res.cookie("userId", userExist._id.toString(), { httpOnly: false, path: "/" });
@@ -113,17 +113,17 @@ const userLogout = async (req, res) => {
     try {
         res.clearCookie("token", {
             httpOnly: true,
-            sameSite: "none",
+            sameSite: "None",
             path: "/"
         });
 
         res.clearCookie("userRole", {
-            sameSite: "none",
+            sameSite: "None",
             path: "/"
         });
 
         res.clearCookie("userId", {
-            sameSite: "none",
+            sameSite: "None",
             path: "/"
         });
 
