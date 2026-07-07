@@ -143,7 +143,6 @@ const registerFoodPartner = async (req, res) => {
     try {
         const { fName, email, password, phone, address, businessName, verificationToken } = req.body;
 
-        // 1. Strict Guard Layer: Check if verification token exists
         if (!verificationToken) {
             return res.status(403).json({ message: "Email verification required before registration." });
         }
@@ -172,7 +171,7 @@ const registerFoodPartner = async (req, res) => {
             address,
             businessName,
             password: hashPassword,
-            isVerified: true // Automatically marked true since passed the token check
+            isVerified: true 
         });
 
         const token = jwt.sign({ id: createdFoodPartner._id }, process.env.JWT_SECRET_KEY);
@@ -211,7 +210,7 @@ const loginFoodPartner = async (req, res) => {
 
             res.cookie("token", token, { httpOnly: false, path: "/" });
             res.cookie("userId", foodPartnerExist._id.toString(), { httpOnly: false, path: "/" });
-            res.cookie("userRole", "food-partner", { httpOnly: false, path: "/" });
+            res.cookie("userRole", "food-partner", { httpOnly: true, sameSite: "none", path: "/" });
             
             return res.status(200).json({
                 message: "Login Successfully.",
@@ -229,12 +228,12 @@ const loginFoodPartner = async (req, res) => {
 const logoutFoodPartner = (req, res) => {
     res.clearCookie("token", {
         httpOnly: true,
-        sameSite: "strict",
+        sameSite: "none",
         path: "/"
     });
 
     res.clearCookie("userRole", {
-        sameSite: "strict",
+        sameSite: "none",
         path: "/"
     });
 
