@@ -21,10 +21,17 @@ app.use((req, res, next) => {
 
 
 app.use(cors({
-    origin: [
-        "http://localhost:3000",
-        "https://food-node.vercel.app",
-    ],
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            "http://localhost:3000",
+            "https://food-node.vercel.app",
+        ];
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error("Not allowed by CORS"));
+        }
+    },
     credentials: true,
 }));
 
