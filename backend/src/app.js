@@ -19,23 +19,39 @@ app.use((req, res, next) => {
   next();
 });
 
-app.use(cors({
-    origin: function (origin, callback) {
-        if (
-            !origin ||
-            origin === "https://food-node.vercel.app" ||
-            /^https:\/\/food-node-.*-waleedafridi-1s-projects\.vercel\.app$/.test(origin) ||
-            origin === "http://localhost:3000"
-        ) {
-            callback(null, true);
-        } else {
-            callback(new Error("Not allowed by CORS"));
-        }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization"]
-}));
+import cors from "cors";
+
+app.use(
+    cors({
+        origin(origin, callback) {
+            if (
+                !origin ||
+                origin === "http://localhost:3000" ||
+                /^https:\/\/food-node.*\.vercel\.app$/.test(origin)
+            ) {
+                return callback(null, true);
+            }
+
+            return callback(new Error("Not allowed by CORS"));
+        },
+
+        credentials: true,
+
+        methods: [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE",
+            "OPTIONS",
+        ],
+
+        allowedHeaders: [
+            "Content-Type",
+            "Authorization",
+        ],
+    })
+);
 
 
 
