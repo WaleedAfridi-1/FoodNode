@@ -36,7 +36,7 @@ const userRegister = async (req, res) => {
         res.cookie("token", token, {
             httpOnly: false,
             secure: true,
-            sameSite: "None",
+            sameSite: "lax",
             path: "/"
         });
         res.cookie("userId", StringUserId,
@@ -84,7 +84,7 @@ const userLogin = async (req, res) => {
             res.cookie("token", token, {
                 httpOnly: false,
                 secure: true,
-                sameSite: "None",
+                sameSite: "lax",
                 path: "/"
             })
             res.cookie("userId", userExist._id.toString(), { httpOnly: false, path: "/" });
@@ -113,17 +113,17 @@ const userLogout = async (req, res) => {
     try {
         res.clearCookie("token", {
             httpOnly: false,
-            sameSite: "None",
+            sameSite: "lax",
             path: "/"
         });
 
         res.clearCookie("userRole", {
-            sameSite: "None",
+            sameSite: "lax",
             path: "/"
         });
 
         res.clearCookie("userId", {
-            sameSite: "None",
+            sameSite: "lax",
             path: "/"
         });
 
@@ -210,7 +210,7 @@ const loginFoodPartner = async (req, res) => {
 
             res.cookie("token", token, { httpOnly: false, path: "/" });
             res.cookie("userId", foodPartnerExist._id.toString(), { httpOnly: false, path: "/" });
-            res.cookie("userRole", "food-partner", { httpOnly: false, sameSite: "None", path: "/" });
+            res.cookie("userRole", "food-partner", { httpOnly: false, sameSite: "lax", path: "/" });
             
             return res.status(200).json({
                 message: "Login Successfully.",
@@ -228,17 +228,17 @@ const loginFoodPartner = async (req, res) => {
 const logoutFoodPartner = (req, res) => {
     res.clearCookie("token", {
         httpOnly: false,
-        sameSite: "none",
+        sameSite: "lax",
         path: "/"
     });
 
     res.clearCookie("userRole", {
-        sameSite: "None",
+        sameSite: "lax",
         path: "/"
     });
 
     res.clearCookie("userId", {
-        sameSite: "None",
+        sameSite: "lax",
         path: "/"
     });
     res.status(200).json("Logout Successfully.")
