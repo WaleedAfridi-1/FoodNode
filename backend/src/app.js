@@ -21,31 +21,28 @@ app.use((req, res, next) => {
 // 2. Manual Header Override Middleware (Yeh Browser ko shanti dega!)
 app.use((req, res, next) => {
   const origin = req.headers.origin;
-  
-  // Jo origin request kar raha hai (Vercel ya Localhost), hum use exact allow karenge
-  if (origin === "https://food-node.vercel.app" || origin?.includes("localhost")) {
-    res.setHeader("Access-Control-Allow-Origin", origin);
-  }
-  
-  // ERROR KI ASLI WAJAH KA HAL: Forcefully credentials true bhej rahe hain
-  res.setHeader("Access-Control-Allow-Credentials", "true");
-  res.setHeader("Access-Control-Allow-Methods", "GET,POST,PUT,DELETE,OPTIONS");
-  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Requested-With, Accept");
+  const allowedOrigins = [
+  'http://localhost:3000', // Your local development environment
+  'https://your-frontend-domain.vercel.app' // Your deployed frontend URL
+];
 
-  // Agar OPTIONS (Preflight) request ho, toh foran 200 OK karke return kar do, aage route pe mat bhejo
-  if (req.method === "OPTIONS") {
-    return res.sendStatus(200);
-  }
-  
-  next();
-});
-
-// 3. Backup CORS Setup
 app.use(cors({
-  origin: "https://food-node.vercel.app",
-  credentials: true
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // This is CRITICAL because you used credentials: 'include'
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
+  
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
