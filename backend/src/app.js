@@ -29,8 +29,7 @@ app.use(cors({
         } else {
             callback(null, origin); // exact same origin allow karega jo request bhej raha hai
         }
-    },
-    credentials: true,
+    }
 }));
 
 
