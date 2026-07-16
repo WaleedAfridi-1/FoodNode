@@ -21,15 +21,12 @@ app.use((req, res, next) => {
 
 
 
+// app.js mein CORS ko temporary aise replace karein:
 app.use(cors({
-    origin: function (origin, callback) {
-        // Agar request local se hai ya Vercel se, ya origin exists karta hai:
-        if (!origin) {
-            callback(null, true);
-        } else {
-            callback(null, origin); // exact same origin allow karega jo request bhej raha hai
-        }
-    }
+    origin: "https://food-node.vercel.app", // exact aapka frontend URL (bina slash ke end par)
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 
