@@ -1,7 +1,7 @@
 const userModel = require("../models/user.model");
 const foodPartnerModel = require("../models/foodPartner.model");
 const jwt = require("jsonwebtoken");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("bcrypt");
 
 // Centralized cookie options helper function
 const getCookieOptions = () => {
