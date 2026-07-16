@@ -35,7 +35,7 @@ const userRegister = async (req, res) => {
         // 5. Set Cookie
         res.cookie("token", token, {
             httpOnly: false,
-            secure: true,
+            secure: false,
             sameSite: "lax",
             path: "/"
         });
@@ -83,12 +83,12 @@ const userLogin = async (req, res) => {
 
             res.cookie("token", token, {
                 httpOnly: false,
-                secure: true,
+                secure: false,
                 sameSite: "lax",
                 path: "/"
             })
-            res.cookie("userId", userExist._id.toString(), { httpOnly: false, path: "/" });
-            res.cookie("userRole", "user", { httpOnly: false, path: "/" });
+            res.cookie("userId", userExist._id.toString(), { httpOnly: false, secure: false , sameSite: "lax", path: "/"});
+            res.cookie("userRole", "user", {httpOnly: false, secure: false , sameSite: "lax", path: "/"});
 
             return res.status(200).json({
                 message: "Login Successfully.",
@@ -112,19 +112,15 @@ const userLogin = async (req, res) => {
 const userLogout = async (req, res) => {
     try {
         res.clearCookie("token", {
-            httpOnly: false,
-            sameSite: "lax",
-            path: "/"
+            httpOnly: false, secure: false , sameSite: "lax", path: "/"
         });
 
         res.clearCookie("userRole", {
-            sameSite: "lax",
-            path: "/"
+            httpOnly: false, secure: false , sameSite: "lax", path: "/"
         });
 
         res.clearCookie("userId", {
-            sameSite: "lax",
-            path: "/"
+            httpOnly: false, secure: false , sameSite: "lax", path: "/"
         });
 
         return res.status(200).json({
@@ -176,9 +172,9 @@ const registerFoodPartner = async (req, res) => {
 
         const token = jwt.sign({ id: createdFoodPartner._id }, process.env.JWT_SECRET_KEY);
         
-        res.cookie("token", token, { httpOnly: false, secure: process.env.NODE_ENV === "production", sameSite: "lax", path: "/" });
-        res.cookie("userId", createdFoodPartner._id.toString(), { httpOnly: false, path: "/" });
-        res.cookie("userRole", "food-partner", { httpOnly: false, path: "/" });
+        res.cookie("token", token, { httpOnly: false, secure: false , sameSite: "lax", path: "/" });
+        res.cookie("userId", createdFoodPartner._id.toString(), { httpOnly: false, secure: false , sameSite: "lax", path: "/" });
+        res.cookie("userRole", "food-partner", { httpOnly: false, secure: false , sameSite: "lax", path: "/"});
 
         return res.status(201).json({
             message: "Account Created Successfully, Please Login Your Account.",
@@ -208,9 +204,9 @@ const loginFoodPartner = async (req, res) => {
         if (validFoodPartner) {
             const token = jwt.sign({ id: foodPartnerExist._id }, process.env.JWT_SECRET_KEY);
 
-            res.cookie("token", token, { httpOnly: false, path: "/" });
-            res.cookie("userId", foodPartnerExist._id.toString(), { httpOnly: false, path: "/" });
-            res.cookie("userRole", "food-partner", { httpOnly: false, sameSite: "lax", path: "/" });
+            res.cookie("token", token, { httpOnly: false, secure: false , sameSite: "lax", path: "/" });
+            res.cookie("userId", foodPartnerExist._id.toString(), {httpOnly: false, secure: false , sameSite: "lax", path: "/" });
+            res.cookie("userRole", "food-partner", {httpOnly: false, secure: false , sameSite: "lax", path: "/"});
             
             return res.status(200).json({
                 message: "Login Successfully.",
@@ -227,19 +223,15 @@ const loginFoodPartner = async (req, res) => {
 }
 const logoutFoodPartner = (req, res) => {
     res.clearCookie("token", {
-        httpOnly: false,
-        sameSite: "lax",
-        path: "/"
+        httpOnly: false, secure: false , sameSite: "lax", path: "/"
     });
 
     res.clearCookie("userRole", {
-        sameSite: "lax",
-        path: "/"
+        httpOnly: false, secure: false , sameSite: "lax", path: "/"
     });
 
     res.clearCookie("userId", {
-        sameSite: "lax",
-        path: "/"
+        httpOnly: false, secure: false , sameSite: "lax", path: "/"
     });
     res.status(200).json("Logout Successfully.")
 }
