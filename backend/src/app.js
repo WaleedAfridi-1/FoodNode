@@ -22,8 +22,8 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   const origin = req.headers.origin;
   const allowedOrigins = [
-  'http://localhost:3000', // Your local development environment
-  'https://your-frontend-domain.vercel.app' // Your deployed frontend URL
+  'http://localhost:3000', 
+  'https://food-node.vercel.app/' 
 ];
 
 app.use(cors({
