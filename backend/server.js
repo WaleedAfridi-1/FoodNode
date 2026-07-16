@@ -4,7 +4,7 @@ const ConnectDB = require("./src/db/db");
 
 
 ConnectDB();
-
-app.listen(5000, () => {
-    console.log("Running on 5000 port")
+const PORT = process.env.PORT || 5000
+app.listen(PORT, () => {
+    console.log(`Sever is running on port ${PORT}`)
 })
