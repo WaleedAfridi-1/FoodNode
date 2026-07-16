@@ -27,10 +27,10 @@ const UserLoginPageComponent = () => {
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email, password }),
-        },
-      );
+        }
+      )
 
-      const data = await res.json();
+      const data = await res.json()
       if (res.ok) {
         toast.success(data.message)
         setEmail("");
