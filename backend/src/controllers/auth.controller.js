@@ -3,12 +3,21 @@ const foodPartnerModel = require("../models/foodPartner.model");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 
-// User Auth 
+// Centralized cookie options helper function
+const getCookieOptions = () => {
+    return {
+        httpOnly: false, // Taki agar user login status front-end se direct read karna ho toh masla na ho
+        secure: true,    // Railway (HTTPS) aur Vercel (HTTPS) ke liye compulsory hai
+        sameSite: "none", // Cross-origin cookies transfer ke liye compulsory hai
+        path: "/"
+    };
+};
+
+// ================= USER REGISTER =================
 const userRegister = async (req, res) => {
     try {
         const { fName, email, password } = req.body;
 
-        // 1. Check if user exists
         const userExist = await userModel.findOne({ email });
         if (userExist) {
             return res.status(400).json({
@@ -16,44 +25,27 @@ const userRegister = async (req, res) => {
             });
         }
 
-        // 2. Hash Password
         const hashPassword = await bcrypt.hash(password, 10);
 
-        // 3. Create User
         const user = await userModel.create({
             fName,
             email,
             password: hashPassword
         });
 
-        // 4. Generate Token
         if (!process.env.JWT_SECRET_KEY) {
             throw new Error("JWT_SECRET_KEY is missing in env variables");
         }
+        
         const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET_KEY);
-        const StringUserId = user._id.toString()
-        // 5. Set Cookie
-        res.cookie("token", token, {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-        });
-        res.cookie("userId", StringUserId,
-            {
-                httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-            });
-        res.cookie("userRole", "user", 
-            { 
-               httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-            });
-        // 6. Send Success Response
+        const StringUserId = user._id.toString();
+        
+        const cookieOpts = getCookieOptions();
+
+        res.cookie("token", token, cookieOpts);
+        res.cookie("userId", StringUserId, cookieOpts);
+        res.cookie("userRole", "user", cookieOpts);
+
         return res.status(201).json({
             message: "User Registered successfully.",
             user
@@ -61,7 +53,6 @@ const userRegister = async (req, res) => {
 
     } catch (error) {
         console.error("Backend Error:", error);
-
         return res.status(500).json({
             message: "Internal Server Error",
             error: error.message
@@ -69,40 +60,25 @@ const userRegister = async (req, res) => {
     }
 };
 
+// ================= USER LOGIN =================
 const userLogin = async (req, res) => {
     try {
         const { email, password } = req.body;
         const userExist = await userModel.findOne({ email });
 
         if (!userExist) {
-
-            return res.status(400).json({ message: "Invalid Email Or Password" })
+            return res.status(400).json({ message: "Invalid Email Or Password" });
         }
 
-        const userValid = await bcrypt.compare(password, userExist.password)
+        const userValid = await bcrypt.compare(password, userExist.password);
 
         if (userValid) {
+            const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET_KEY);
+            const cookieOpts = getCookieOptions();
 
-            const token = jwt.sign({ id: userExist._id }, process.env.JWT_SECRET_KEY)
-
-            res.cookie("token", token, {
-                httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-            })
-            res.cookie("userId", userExist._id.toString(),{ 
-                httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/",
-            });
-            res.cookie("userRole", "user", {
-                httpOnly: false,
-                secure: false,
-                sameSite: "lax",
-                path: "/"
-            });
+            res.cookie("token", token, cookieOpts);
+            res.cookie("userId", userExist._id.toString(), cookieOpts);
+            res.cookie("userRole", "user", cookieOpts);
 
             return res.status(200).json({
                 message: "Login Successfully.",
@@ -111,40 +87,23 @@ const userLogin = async (req, res) => {
                     email: userExist.email,
                     id: userExist._id
                 }
-            })
+            });
         } else {
-            return res.status(403).json({ message: "Invalid Email or Password" })
+            return res.status(403).json({ message: "Invalid Email or Password" });
         }
     } catch (error) {
-        console.log(error)
-        res.status(500).json({ message: "Internal Server Error" })
+        console.error(error);
+        res.status(500).json({ message: "Internal Server Error" });
     }
+};
 
-
-}
-
+// ================= USER LOGOUT =================
 const userLogout = async (req, res) => {
     try {
-        res.clearCookie("token", {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-        });
-
-        res.clearCookie("userRole", {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-        });
-
-        res.clearCookie("userId", {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-        });
+        const cookieOpts = getCookieOptions();
+        res.clearCookie("token", cookieOpts);
+        res.clearCookie("userRole", cookieOpts);
+        res.clearCookie("userId", cookieOpts);
 
         return res.status(200).json({
             success: true,
@@ -155,9 +114,7 @@ const userLogout = async (req, res) => {
     }
 };
 
-
-
-// auth.controller.js
+// ================= REGISTER FOOD PARTNER =================
 const registerFoodPartner = async (req, res) => {
     try {
         const { fName, email, password, phone, address, businessName, verificationToken } = req.body;
@@ -167,7 +124,6 @@ const registerFoodPartner = async (req, res) => {
         }
 
         try {
-            // Verify JWT temporary token
             const decoded = jwt.verify(verificationToken, process.env.JWT_SECRET_KEY);
             if (decoded.email !== email || !decoded.verified) {
                 return res.status(403).json({ message: "Invalid or forged verification data." });
@@ -176,7 +132,6 @@ const registerFoodPartner = async (req, res) => {
             return res.status(403).json({ message: "Verification token expired. Please verify email again." });
         }
 
-        // 2. Main account generation pipeline
         const foodPartner = await foodPartnerModel.findOne({ email });
         if (foodPartner) {
             return res.status(400).json({ message: "User Already Exist, Please Login" });
@@ -194,24 +149,11 @@ const registerFoodPartner = async (req, res) => {
         });
 
         const token = jwt.sign({ id: createdFoodPartner._id }, process.env.JWT_SECRET_KEY);
+        const cookieOpts = getCookieOptions();
         
-        res.cookie("token", token, {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/" 
-        });
-        res.cookie("userId", createdFoodPartner._id.toString(), { 
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/" });
-        res.cookie("userRole", "food-partner", {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-        });
+        res.cookie("token", token, cookieOpts);
+        res.cookie("userId", createdFoodPartner._id.toString(), cookieOpts);
+        res.cookie("userRole", "food-partner", cookieOpts);
 
         return res.status(201).json({
             message: "Account Created Successfully, Please Login Your Account.",
@@ -227,6 +169,7 @@ const registerFoodPartner = async (req, res) => {
     }
 };
 
+// ================= LOGIN FOOD PARTNER =================
 const loginFoodPartner = async (req, res) => {
     try {
         const { email, password } = req.body;
@@ -240,25 +183,11 @@ const loginFoodPartner = async (req, res) => {
         
         if (validFoodPartner) {
             const token = jwt.sign({ id: foodPartnerExist._id }, process.env.JWT_SECRET_KEY);
+            const cookieOpts = getCookieOptions();
 
-            res.cookie("token", token, { 
-                httpOnly: false,
-                secure: false,
-                sameSite: "lax",
-                path: "/"
-                                       });
-            res.cookie("userId", foodPartnerExist._id.toString(), {
-                httpOnly: false,
-                secure: false,
-                sameSite: "lax",
-                path: "/"
-            });
-            res.cookie("userRole", "food-partner", {
-                httpOnly: false,
-                secure: false,
-                sameSite: "lax",
-                path: "/"
-            });
+            res.cookie("token", token, cookieOpts);
+            res.cookie("userId", foodPartnerExist._id.toString(), cookieOpts);
+            res.cookie("userRole", "food-partner", cookieOpts);
             
             return res.status(200).json({
                 message: "Login Successfully.",
@@ -269,33 +198,21 @@ const loginFoodPartner = async (req, res) => {
         return res.status(400).json({ message: "Invalid Email or Password" });
 
     } catch (error) {
-        console.log(error.message);
+        console.error(error.message);
         return res.status(500).json({ message: "Internal Server Error" });
     }
-}
+};
+
+// ================= LOGOUT FOOD PARTNER =================
 const logoutFoodPartner = (req, res) => {
-    res.clearCookie("token", {
-                httpOnly: false,
-                 secure: false,
-                sameSite: "lax",
-                path: "/"
-    });
+    const cookieOpts = getCookieOptions();
+    res.clearCookie("token", cookieOpts);
+    res.clearCookie("userRole", cookieOpts);
+    res.clearCookie("userId", cookieOpts);
+    
+    return res.status(200).json("Logout Successfully.");
+};
 
-    res.clearCookie("userRole", {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-    });
-
-    res.clearCookie("userId", {
-            httpOnly: false,
-            secure: false,
-            sameSite: "lax",
-            path: "/"
-    });
-    res.status(200).json("Logout Successfully.")
-}
 module.exports = {
     userRegister,
     userLogin,
@@ -303,4 +220,4 @@ module.exports = {
     registerFoodPartner,
     loginFoodPartner,
     logoutFoodPartner
-}
+};
