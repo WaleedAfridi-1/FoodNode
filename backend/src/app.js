@@ -23,7 +23,12 @@ app.use((req, res, next) => {
 
 app.use(cors({
     origin: function (origin, callback) {
-        callback(null, true); 
+        // Agar request local se hai ya Vercel se, ya origin exists karta hai:
+        if (!origin) {
+            callback(null, true);
+        } else {
+            callback(null, origin); // exact same origin allow karega jo request bhej raha hai
+        }
     },
     credentials: true,
 }));
